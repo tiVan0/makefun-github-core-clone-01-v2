@@ -1,44 +1,49 @@
 # github-core-clone-01
 
-A standalone GitHub-compatible git forge in one process (Node 22, stdlib only,
-no dependencies, no git binary). It serves the four surfaces the make.fun
-suite drives:
+A standalone GitHub-compatible git forge in one Node 22 process, standard library
+only — no dependencies. It serves the whole surface the conformance suite drives:
 
-- **git smart HTTP v2** (`/{owner}/{repo}.git`): upload-pack v2 (ls-refs, fetch
-  with shallow/deepen, thin-pack requests answered with full packs) and
-  receive-pack v0 (report-status in sideband, per-ref fast-forward checks).
-- **REST v3** (`/api/v3`): repos, branches, commits, contents, git refs,
-  labels, issues, comments, pull requests (incl. squash merge with conflict
-  detection).
-- **GraphQL v4** (`/api/graphql`): viewer, repository, issues, pull requests,
-  `__type` introspection, Relay `node(id:)`, the five mutations, operation
-  batching.
-- **MCP** (`/mcp`): modern 2026-07-28 era (`server/discover`) plus a legacy
-  `initialize` fallback; the six github-mcp-server tools.
-
-The store is in-memory and deterministic. The token owner (viewer login) is
-derived from the suite's public seeded scenario (wire.ts's `SCENARIO_SEED`
-and the `users` stream), with a learn-and-lock fallback on the first
-owner-bearing request.
+- **Git smart HTTP v2** (and v0): `info/refs` advertisement, `upload-pack`
+  (clone/fetch, ls-refs, shallow/deepen) and `receive-pack` (push with per-ref
+  report-status), pkt-line framing, sideband packs, SHA-1 object identity.
+- **REST v3** (`/api/v3`): repositories, branches, commits, contents, labels,
+  issues, comments and pull requests, including squash merge with conflict
+  detection.
+- **GraphQL** (`/api/graphql`): viewer, repository, issue, pull request, node
+  and the five mutations, plus the `__type` introspection probe — all through a
+  small hand-written parser and executor.
+- **MCP** (`/mcp`, revision 2026-07-28): `server/discover` plus six tools
+  (create_repo, get_repo, create_issue, list_issues, create_pull_request,
+  merge_pull_request) over JSON-RPC.
 
 ## Run
 
+```sh
+MAKEFUN_SHOP_TOKEN=<token> node --experimental-strip-types main.ts --port 8080
 ```
-MAKEFUN_SHOP_TOKEN=<redacted>
+
+With `MAKEFUN_ENV_URL` set, the process registers its ephemeral port with the
+trial env and waits for it to say done; without it, it is a plain long-running
+server for local practice runs. The viewer is derived from the public scenario
+seed (`MAKEFUN_SCENARIO_SEED` overrides the default); all state is in memory.
+
+## Layout
+
+- `main.ts` — entrypoint and (when set) the env register/done lifecycle.
+- `app.ts` — the HTTP server: routing, bearer auth, request ids, body reading.
+- `store.ts` — all state plus the shared git operations (trees, merges, diffs,
+  fetch packs with caching).
+- `gitobj.ts` — git objects, packs (plain + delta reads) and pkt-lines.
+- `git-http.ts` — smart-HTTP handlers.
+- `rest.ts` — REST v3 handlers (issue bodies are pre-serialised per issue).
+- `graphql.ts` — GraphQL parser and executor.
+- `mcp.ts` — MCP discover/tools handlers.
+- `scenario.ts` — the seeded viewer derivation.
+
+## Validate
+
+```sh
+node --experimental-strip-types <kit>/sdk/run.ts --url http://127.0.0.1:8080 --token <token> --perf --json
 ```
 
-`main.ts` is the entry <-> env lifecycle (bind ephemeral port, register,
-poll `/done`, exit 0). The server is built by `app.ts`.
-
-## Files
-
-- `scenario.ts` — the public seeded-scenario derivation (viewer login).
-- `gitobj.ts` — git object model, pack codec, pkt-line framing.
-- `store.ts` — the in-memory forge: repos, git state, issues, pull requests,
-  merges, diffs.
-- `git-http.ts` — smart-HTTP handlers (advertise, ls-refs, fetch, receive-pack).
-- `rest.ts` — REST v3 handlers.
-- `graphql.ts` — GraphQL v4 executor for the suite's fixed document set.
-- `mcp.ts` — MCP endpoint.
-- `app.ts` — HTTP server, routing, auth, request ids.
-- `main.ts` — lifecycle.
+Target: 120/120 checks, score ~925.

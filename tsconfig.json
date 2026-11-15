@@ -1,1 +1,1 @@
-{"compilerOptions":{"allowImportingTsExtensions":true,"module":"NodeNext","moduleResolution":"NodeNext","noEmit":true,"skipLibCheck":true,"strict":true,"target":"ES2022"},"include":["*.ts"]}
+{"compilerOptions":{"module":"NodeNext","moduleResolution":"NodeNext","noUncheckedIndexedAccess":false,"outDir":"dist","rootDir":".","skipLibCheck":true,"strict":true,"target":"ES2024","types":["node"]},"include":["*.ts"]}
