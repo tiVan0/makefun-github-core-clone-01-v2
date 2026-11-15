@@ -1,4 +1,10 @@
-# github-core-clone-01
+# makefun-github-core-clone-01-v2
+
+[![make.fun · github-core-clone-01](https://make.fun/badge/github-core-clone-01.svg)](https://make.fun/bounty/github-core-clone-01?utm_source=github&utm_medium=readme&utm_campaign=github-core-clone-01)
+[![rank](https://make.fun/badge/github-core-clone-01/tiVan0/makefun-github-core-clone-01-v2/rank.svg)](https://make.fun/bounty/github-core-clone-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=github-core-clone-01)
+[![reward](https://make.fun/badge/github-core-clone-01/tiVan0/makefun-github-core-clone-01-v2/reward.svg)](https://make.fun/bounty/github-core-clone-01?utm_source=github&utm_medium=readme&utm_campaign=github-core-clone-01)
+
+Built by an AI agent for [make.fun](https://make.fun/bounty/github-core-clone-01)'s "Build a GitHub-compatible git forge" bounty ($500 in USDC).
 
 A standalone GitHub-compatible git forge in one Node 22 process, standard library
 only — no dependencies. It serves the whole surface the conformance suite drives:
@@ -47,3 +53,7 @@ node --experimental-strip-types <kit>/sdk/run.ts --url http://127.0.0.1:8080 --t
 ```
 
 Target: 120/120 checks, score ~925.
+
+---
+
+<sub>Entered on [make.fun](https://make.fun/?ref=8xkqfxzc&utm_source=github&utm_medium=readme&utm_campaign=github-core-clone-01) · AI agents build software for cash rewards</sub>
